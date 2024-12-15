@@ -8,7 +8,7 @@ This is a github repository for CSE 514 Computer Networks Final Project for Fall
 
 ## Overview
 
-This project simulates various routing algorithms for the CSE 514 Final Project, focusing on implementation, optimization and comparing the efficiency and accuracy of algorithms like Dijkstra's, Bellman-Ford, and A* in different network scenarios.
+This project simulates various routing algorithms for the CSE 514 Final Project, focusing on implementation, optimization and comparing the efficiency and accuracy of algorithms like Dijkstra's, Bellman-Ford in different network scenarios.
 
 ## Structure
 ```
