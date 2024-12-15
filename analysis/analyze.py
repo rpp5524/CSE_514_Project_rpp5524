@@ -9,6 +9,7 @@ def analyze_performance(graph, results):
         metrics['latency'].append(total_distance / len(distances))
     metrics['routing_overhead'] = len(graph.edges) * 2  # Example overhead calculation
     print("Performance Metrics:", metrics)
+    return metrics
 
 
 def analyze_complex_performance(graph, results, packets_per_second=100, packet_size=1000):
@@ -58,6 +59,7 @@ def analyze_complex_performance(graph, results, packets_per_second=100, packet_s
     metrics['latency'] = avg_latency
 
     print("Performance Metrics:", metrics)
+    return metrics
 
 def analyze_utilization_performance(graph, results, packets_per_second=100, packet_size=1000):
     """
@@ -116,7 +118,8 @@ def analyze_utilization_performance(graph, results, packets_per_second=100, pack
     avg_latency = sum(sum(distances.values()) for distances in results.values()) / (len(graph.nodes) ** 2)
     metrics['latency'] = avg_latency
 
-    print("Performance Metrics:", metrics)
+    # print("Performance Metrics:", metrics)
+    return metrics
 
 
 def analyze_performance_pvr(graph, pvr_results, packets_per_second=100, packet_size=1000):
@@ -191,5 +194,6 @@ def analyze_performance_pvr(graph, pvr_results, packets_per_second=100, packet_s
     metrics["routing_overhead"] = num_nodes * num_edges * 2  # Example assumption
 
     # Return metrics
-    print("Performance Metrics:", metrics)
+    # print("Performance Metrics:", metrics)
+    return metrics
 

@@ -1,10 +1,9 @@
-# CSE_514_rpp5524
 This is a github repository for CSE 514 Computer Networks Final Project for Fall 2024
 - Name: Rohan Prasad
 - PSU ID: 980707395
 - PSU email: rpp5524@psu.edu
 
-# Routing Algorithms Simulation
+# Routing Algorithms Simulation & Optimization
 
 ## Overview
 
