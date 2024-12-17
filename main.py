@@ -7,8 +7,9 @@ from src.algorithms.path_vector import PathVectorRouting
 from analysis.analyze import analyze_utilization_performance, analyze_performance_pvr
 
 # Define the topologies and number of nodes
-TOPOLOGIES = ["linear", "star", "mesh", "ring", "tree", "grid"]
-NODE_RANGES = range(10, 201, 10)
+# TOPOLOGIES = ["linear", "star", "mesh", "ring", "grid"]
+TOPOLOGIES = ["tree"]
+NODE_RANGES = range(10, 110, 10)
 
 # Initialize a list to store results
 results = []
@@ -20,7 +21,7 @@ for topology_type in TOPOLOGIES:
 
         # Create the topology with constant weights
         topology = NetworkTopology(topology_type, num_nodes)
-        topology.add_constant_weights(10)  # Constant weight example
+        topology.add_random_weights(min_cost=1, max_cost=10)  # Random weight example
 
         # Initialize algorithms
         dvr = DistanceVectorRouting(topology.graph)
@@ -41,7 +42,7 @@ for topology_type in TOPOLOGIES:
             "Latency (ms)": metrics["latency"], "Throughput (Mbps)": metrics["throughput"],
             "Routing Overhead (packets)": metrics["routing_overhead"],
             "Network Utilization (%)": metrics["network_utilization"],
-            "Execution Time (s)": elapsed_time, "Weights": "constant"
+            "Execution Time (s)": elapsed_time, "Weights": "random"
         })
 
 
@@ -59,7 +60,7 @@ for topology_type in TOPOLOGIES:
             "Latency (ms)": metrics["latency"], "Throughput (Mbps)": metrics["throughput"],
             "Routing Overhead (packets)": metrics["routing_overhead"],
             "Network Utilization (%)": metrics["network_utilization"],
-            "Execution Time (s)": elapsed_time, "Weights": "constant"
+            "Execution Time (s)": elapsed_time, "Weights": "random"
         })
 
         # Path Vector Routing
@@ -76,7 +77,7 @@ for topology_type in TOPOLOGIES:
             "Latency (ms)": metrics["latency"], "Throughput (Mbps)": metrics["throughput"],
             "Routing Overhead (packets)": metrics["routing_overhead"],
             "Network Utilization (%)": metrics["network_utilization"],
-            "Execution Time (s)": elapsed_time, "Weights": "constant"
+            "Execution Time (s)": elapsed_time, "Weights": "random"
         })
 
         print("------------------------------------------------------------------------------------")
@@ -128,6 +129,6 @@ for topology_type in TOPOLOGIES:
 
 # Convert results to a DataFrame and save to CSV
 results_df = pd.DataFrame(results)
-results_df.to_csv("./routing_data/routing_algorithm_results.csv", index=False)
+results_df.to_csv("./routing_data/routing_algorithm_results_random_weights_tree.csv", index=False)
 
 print("Simulation complete. Results saved to routing_algorithm_results.csv")

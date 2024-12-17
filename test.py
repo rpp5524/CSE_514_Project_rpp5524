@@ -1,37 +1,133 @@
+import time
+import pandas as pd
 from src.topology import NetworkTopology
 from src.algorithms.distance_vector import DistanceVectorRouting
 from src.algorithms.link_state import LinkStateRouting
 from src.algorithms.path_vector import PathVectorRouting
-from analysis.analyze import analyze_performance, analyze_complex_performance, analyze_utilization_performance, analyze_performance_pvr
+from analysis.analyze import analyze_utilization_performance, analyze_performance_pvr
 
-import time
+# Define the topologies and number of nodes
+TOPOLOGIES = ["grid"]
+NODE_RANGES = range(10, 201, 10)
 
-topology = NetworkTopology("mesh", 3)
-topology.add_constant_weights(10)
-# print("hello")
-dvr = DistanceVectorRouting(topology.graph)
-lsr = LinkStateRouting(topology.graph)
-pvr = PathVectorRouting(topology.graph)
+# Initialize a list to store results
+results = []
 
-start_time = time.time()
-result_dvr = dvr.run()
-# result_lsr = lsr.run()
-# result_pvr = pvr.run()
-end_time = time.time()
+# Loop through each topology and number of nodes
+for topology_type in TOPOLOGIES:
+    for num_nodes in NODE_RANGES:
+        print(f"Running for topology: {topology_type}, #nodes: {num_nodes}")
 
-print(result_dvr)
-for source, distances in result_dvr.items():
-    print(source, distances)
+        # Create the topology with constant weights
+        topology = NetworkTopology(topology_type, num_nodes)
+        topology.add_constant_weights(10)  # Constant weight example
 
-# print("Distance Vector Results:", result_dvr)
-# print("Distance Vector Results:", result_lsr)
-# print("Distance Vector Results:", result_pvr)
+        # Initialize algorithms
+        dvr = DistanceVectorRouting(topology.graph)
+        lsr = LinkStateRouting(topology.graph)
+        pvr = PathVectorRouting(topology.graph)
 
-elapsed_time = end_time - start_time
+        # Distance Vector Routing
+        print(f"Running Distance Vector Algorithm for {topology_type}, #nodes: {num_nodes}", end = " | ")
+        start_time = time.time()
+        result_dvr = dvr.run()
+        end_time = time.time()
+        print("Done Running", end = " | ")
+        elapsed_time = end_time - start_time
+        metrics = analyze_utilization_performance(topology.graph, result_dvr)
+        print("Done Analyzing")
+        results.append({
+            "Topology": topology_type, "Number of Nodes": num_nodes, "Algorithm": "Distance Vector",
+            "Latency (ms)": metrics["latency"], "Throughput (Mbps)": metrics["throughput"],
+            "Routing Overhead (packets)": metrics["routing_overhead"],
+            "Network Utilization (%)": metrics["network_utilization"],
+            "Execution Time (s)": elapsed_time, "Weights": "constant"
+        })
 
-# Print the result
-print(f"Time taken to run pvr.run(): {elapsed_time:.4f} seconds")
 
-analyze_utilization_performance(topology.graph, result_dvr)
-# analyze_utilization_performance(topology.graph, result_lsr)
-# analyze_utilization_performance(topology.graph, result_dvr)
+        # Link State Routing
+        print(f"Running Link State Algorithm for {topology_type}, #nodes: {num_nodes}", end = " | ")
+        start_time = time.time()
+        result_lsr = lsr.run()
+        end_time = time.time()
+        print("Done Running", end = " | ")
+        elapsed_time = end_time - start_time
+        metrics = analyze_utilization_performance(topology.graph, result_lsr)
+        print("Done Analyzing")
+        results.append({
+            "Topology": topology_type, "Number of Nodes": num_nodes, "Algorithm": "Link State",
+            "Latency (ms)": metrics["latency"], "Throughput (Mbps)": metrics["throughput"],
+            "Routing Overhead (packets)": metrics["routing_overhead"],
+            "Network Utilization (%)": metrics["network_utilization"],
+            "Execution Time (s)": elapsed_time, "Weights": "constant"
+        })
+
+        # Path Vector Routing
+        print(f"Running Path Vector Algorithm for {topology_type}, nodes: {num_nodes}", end = " | ")
+        start_time = time.time()
+        result_pvr = pvr.run()
+        end_time = time.time()
+        print("Done Running", end = " | ")
+        elapsed_time = end_time - start_time
+        metrics = analyze_performance_pvr(topology.graph, result_pvr)
+        print("Done Analyzing")
+        results.append({
+            "Topology": topology_type, "Number of Nodes": num_nodes, "Algorithm": "Path Vector",
+            "Latency (ms)": metrics["latency"], "Throughput (Mbps)": metrics["throughput"],
+            "Routing Overhead (packets)": metrics["routing_overhead"],
+            "Network Utilization (%)": metrics["network_utilization"],
+            "Execution Time (s)": elapsed_time, "Weights": "constant"
+        })
+
+        print("------------------------------------------------------------------------------------")
+
+        # # Optionally: Use random weights for additional testing
+        # topology.add_weights(min_cost=1, max_cost=10)  # Random weights example
+
+        # # Distance Vector Routing with random weights
+        # start_time = time.time()
+        # result_dvr = dvr.run()
+        # end_time = time.time()
+        # elapsed_time = end_time - start_time
+        # metrics = analyze_performance(topology.graph, result_dvr)
+        # results.append({
+        #     "Topology": topology_type, "Number of Nodes": num_nodes, "Algorithm": "Distance Vector",
+        #     "Latency (ms)": metrics["latency (ms)"], "Throughput (Mbps)": metrics["throughput (Mbps)"],
+        #     "Routing Overhead (packets)": metrics["routing_overhead (packets)"],
+        #     "Network Utilization (%)": metrics["network_utilization (%)"],
+        #     "Execution Time (s)": elapsed_time, "Weights": "random"
+        # })
+
+        # # Link State Routing with random weights
+        # start_time = time.time()
+        # result_lsr = lsr.run()
+        # end_time = time.time()
+        # elapsed_time = end_time - start_time
+        # metrics = analyze_performance(topology.graph, result_lsr)
+        # results.append({
+        #     "Topology": topology_type, "Number of Nodes": num_nodes, "Algorithm": "Link State",
+        #     "Latency (ms)": metrics["latency (ms)"], "Throughput (Mbps)": metrics["throughput (Mbps)"],
+        #     "Routing Overhead (packets)": metrics["routing_overhead (packets)"],
+        #     "Network Utilization (%)": metrics["network_utilization (%)"],
+        #     "Execution Time (s)": elapsed_time, "Weights": "random"
+        # })
+
+        # # Path Vector Routing with random weights
+        # start_time = time.time()
+        # result_pvr = pvr.run()
+        # end_time = time.time()
+        # elapsed_time = end_time - start_time
+        # metrics = analyze_performance(topology.graph, result_pvr)
+        # results.append({
+        #     "Topology": topology_type, "Number of Nodes": num_nodes, "Algorithm": "Path Vector",
+        #     "Latency (ms)": metrics["latency (ms)"], "Throughput (Mbps)": metrics["throughput (Mbps)"],
+        #     "Routing Overhead (packets)": metrics["routing_overhead (packets)"],
+        #     "Network Utilization (%)": metrics["network_utilization (%)"],
+        #     "Execution Time (s)": elapsed_time, "Weights": "random"
+        # })
+
+# Convert results to a DataFrame and save to CSV
+results_df = pd.DataFrame(results)
+results_df.to_csv("./routing_data/routing_algorithm_results_grid.csv", index=False)
+
+print("Simulation complete. Results saved to routing_algorithm_results.csv")
